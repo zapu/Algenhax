@@ -11,7 +11,7 @@ namespace algenhax
     {
         public Algen()
         {
-            handles = new IntPtr[(int)AlgenHandle.LAST+1];
+            handles = new IntPtr[(int)AlgenHandle.LAST];
         }
 
         enum AlgenHandle
@@ -20,7 +20,7 @@ namespace algenhax
             MUTACJI = 1,
             LABEL = 2,
             START = 3,
-            LAST = START,
+            LAST,
         }
 
         IntPtr[] handles;
