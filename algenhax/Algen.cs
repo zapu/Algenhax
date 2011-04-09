@@ -28,14 +28,8 @@ namespace algenhax
         int enumIt = 0;
         private bool callback(int hwnd, int lptr)
         {
-            StringBuilder sb = new StringBuilder(100);
-            String className;
-            String text;
-
-            api.GetClassName((IntPtr)hwnd, sb, 100);
-            className = sb.ToString();
-            api.GetWindowText((IntPtr)hwnd, sb, 100);
-            text = sb.ToString();
+            String className = api.managedGetClassName((IntPtr)hwnd);
+            String text = api.managedGetWindowText((IntPtr)hwnd);
 
             if (className == "Edit")
             {
@@ -60,34 +54,26 @@ namespace algenhax
 
         public bool init()
         {
-            //IntPtr hwnd = api.FindWindow("#32770", "Wyniki");
-            IntPtr hwnd = api.FindWindow2("#32770", IntPtr.Zero);
+            IntPtr hwnd = api.FindWindow("#32770", "Obliczenia");
+            
             if (hwnd == IntPtr.Zero)
             {
                 throw new Exception("Cannot find window.");
             }
 
+            String caption = api.managedGetWindowText(hwnd);
+            Console.WriteLine("Window found: " + hwnd + " " + caption);
+
             api.EnumChildWindows(hwnd, callback, 0);
 
-            checkWin32Error();
+            api.checkWin32Error();
 
             if(handles.FirstOrDefault((ptr) => ptr != (IntPtr)0) == (IntPtr)0)
                 throw new Exception("Handles not found.");
 
-            StringBuilder sb = new StringBuilder(100);
-            api.GetWindowText(hwnd, sb, 100);
-            Console.WriteLine("Window: " + hwnd + " " + sb.ToString());
-
             setWindowText(handles[(int)AlgenHandle.LABEL], "liga rzadzi!");
 
             return true;
-        }
-
-        private void checkWin32Error()
-        {
-            int lastError = Marshal.GetLastWin32Error();
-            if (lastError != 0)
-                throw new Exception("Win32 error " + lastError);
         }
 
         private void setWindowText(IntPtr handle, string val)
@@ -95,7 +81,7 @@ namespace algenhax
             IntPtr strPtr = Marshal.StringToHGlobalAuto(val);
             api.SendMessage(handle, api.WM_SETTEXT, (IntPtr)(1), strPtr);
             Marshal.FreeHGlobal(strPtr);
-            checkWin32Error();
+            api.checkWin32Error();
         }
 
         public void setKrzyzowania(string val)
@@ -111,7 +97,7 @@ namespace algenhax
         public void sendStart()
         {
             api.SendMessage(handles[(int)AlgenHandle.START], api.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-            checkWin32Error();
+            api.checkWin32Error();
         }
     }
 }

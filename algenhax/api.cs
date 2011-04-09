@@ -36,6 +36,29 @@ namespace algenhax
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage2(IntPtr hWnd, UInt32 Msg, IntPtr wParam, ref StringBuilder lParam);
 
+        public static void checkWin32Error()
+        {
+            int lastError = Marshal.GetLastWin32Error();
+            if (lastError != 0)
+                throw new Exception("Win32 error " + lastError);
+        }
+
+        public static string managedGetClassName(IntPtr hWnd)
+        {
+            StringBuilder builder = new StringBuilder(128);
+            GetClassName(hWnd, builder, 128);
+            checkWin32Error();
+            return builder.ToString();
+        }
+
+        public static string managedGetWindowText(IntPtr hWnd)
+        {
+            StringBuilder builder = new StringBuilder(128);
+            GetWindowText(hWnd, builder, 128);
+            checkWin32Error();
+            return builder.ToString();
+        }
+
         public const UInt32 EM_SETSEL = 0x00B1;
         public const UInt32 EM_REPLACESEL = 0x00C2;
 
