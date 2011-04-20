@@ -23,6 +23,19 @@ namespace algenhax
 
         static void Main(string[] args)
         {
+            //apitools.enumWindows();
+
+            Estym estym = new Estym();
+            estym.init();
+            //winapitools.enumWindows();
+            //IntPtr hwnd = winapi.FindWindow("#32770", "Sprawdzanie wartości funkcji celu");
+            //IntPtr hwnd = winapi.FindWindow("#32770", "Parametry genetyczne");
+            //winapitools.enumChildWindows(hwnd);
+        }
+
+#if FALSE
+        static void Main(string[] args)
+        {
             try
             {
                 Algen alg = new Algen();
@@ -65,5 +78,6 @@ namespace algenhax
                 Console.WriteLine(e.StackTrace);
             }
         }
+#endif
     }
 }

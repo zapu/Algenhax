@@ -28,8 +28,8 @@ namespace algenhax
         int enumIt = 0;
         private bool callback(int hwnd, int lptr)
         {
-            String className = api.managedGetClassName((IntPtr)hwnd);
-            String text = api.managedGetWindowText((IntPtr)hwnd);
+            String className = winapi.managedGetClassName((IntPtr)hwnd);
+            String text = winapi.managedGetWindowText((IntPtr)hwnd);
 
             if (className == "Edit")
             {
@@ -54,19 +54,19 @@ namespace algenhax
 
         public bool init()
         {
-            IntPtr hwnd = api.FindWindow("#32770", "Obliczenia");
+            IntPtr hwnd = winapi.FindWindow("#32770", "Obliczenia");
             
             if (hwnd == IntPtr.Zero)
             {
                 throw new Exception("Cannot find window.");
             }
 
-            String caption = api.managedGetWindowText(hwnd);
+            String caption = winapi.managedGetWindowText(hwnd);
             Console.WriteLine("Window found: " + hwnd + " " + caption);
 
-            api.EnumChildWindows(hwnd, callback, 0);
+            winapi.EnumChildWindows(hwnd, callback, 0);
 
-            api.checkWin32Error();
+            winapi.checkWin32Error();
 
             if(handles.FirstOrDefault((ptr) => ptr != (IntPtr)0) == (IntPtr)0)
                 throw new Exception("Handles not found.");
@@ -79,9 +79,9 @@ namespace algenhax
         private void setWindowText(IntPtr handle, string val)
         {
             IntPtr strPtr = Marshal.StringToHGlobalAuto(val);
-            api.SendMessage(handle, api.WM_SETTEXT, (IntPtr)(1), strPtr);
+            winapi.SendMessage(handle, winapi.WM_SETTEXT, (IntPtr)(1), strPtr);
             Marshal.FreeHGlobal(strPtr);
-            api.checkWin32Error();
+            winapi.checkWin32Error();
         }
 
         public void setKrzyzowania(string val)
@@ -96,8 +96,8 @@ namespace algenhax
 
         public void sendStart()
         {
-            api.SendMessage(handles[(int)AlgenHandle.START], api.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-            api.checkWin32Error();
+            winapi.SendMessage(handles[(int)AlgenHandle.START], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+            winapi.checkWin32Error();
         }
     }
 }

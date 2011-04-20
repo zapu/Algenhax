@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="Algen.cs" />
     <Compile Include="api.cs" />
+    <Compile Include="apitools.cs" />
+    <Compile Include="Estym.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
