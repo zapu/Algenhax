@@ -80,5 +80,28 @@ namespace algenhax
 
             winapi.EnumChildWindows(windowHwnd, cb, 0);
         }
+
+        public static void enumMenus(IntPtr hMenu, int indent = 0)
+        {
+            int menuCount = winapi.GetMenuItemCount(hMenu);
+            for (int i = 0; i < menuCount; i++)
+            {
+                winapi.MENUITEMINFO mif = new winapi.MENUITEMINFO();
+                mif.cbSize = (uint)Marshal.SizeOf(typeof(winapi.MENUITEMINFO));
+                mif.fMask = winapi.MIIM_TYPE | winapi.MIIM_ID | winapi.MIIM_SUBMENU;
+                mif.fType = winapi.MFT_STRING;
+                mif.cch = 255;
+                mif.dwTypeData = new string((char)0, 255);
+                bool ret = winapi.GetMenuItemInfo(hMenu, (uint)i, true, ref mif);
+                if (ret)
+                {
+                    for(int j = 0; j < indent; j++)
+                        Console.Write("\t");
+
+                    Console.WriteLine(mif.wID + " " + mif.dwTypeData);
+                    enumMenus((IntPtr)mif.hSubMenu, indent + 1);
+                }
+            }
+        }
     }
 }
