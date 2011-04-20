@@ -36,6 +36,9 @@ namespace algenhax
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage2(IntPtr hWnd, UInt32 Msg, IntPtr wParam, ref StringBuilder lParam);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr PostMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+
         public static void checkWin32Error()
         {
             int lastError = Marshal.GetLastWin32Error();
@@ -66,5 +69,47 @@ namespace algenhax
 
         public const UInt32 WM_SETTEXT = 0x000C;
         public const UInt32 WM_COMMAND = 0x0111;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MENUITEMINFO
+        {
+            public uint cbSize;
+            public uint fMask;
+            public uint fType;
+            public uint fState;
+            public int wID;
+            public int hSubMenu;
+            public int hbmpChecked;
+            public int hbmpUnchecked;
+            public int dwItemData;
+            public string dwTypeData;
+            public uint cch;
+            public int hbmpItem;
+        }
+
+        public const UInt32 MIIM_MAXHEIGHT = 0x00000001;
+        public const UInt32 MIIM_BACKGROUND = 0x00000002;
+        public const UInt32 MIIM_HELPID = 0x00000004;
+        public const UInt32 MIIM_MENUDATA = 0x00000008;
+        public const UInt32 MIIM_STYLE = 0x00000010;
+        public const UInt32 MIIM_APPLYTOSUBMENUS = 0x80000000;
+        public const UInt32 MIIM_DATA = 0x00000020;
+        public const UInt32 MIIM_ID = 0x00000002;
+        public const UInt32 MIIM_TYPE = 0x00000010;
+        public const UInt32 MIIM_SUBMENU = 0x00000004;
+
+        public const UInt32 MFT_STRING = 0x00000000;
+
+        [DllImport("user32.dll")]
+        public static extern bool GetMenuItemInfo(IntPtr hMenu, uint uItem, bool fByPosition, ref MENUITEMINFO lpmii);
+
+        [DllImport("user32.dll")]
+        public static extern int GetMenuItemCount(IntPtr hMenu);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetMenu(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetSubMenu(IntPtr hMenu, int nPos);
     }
 }
