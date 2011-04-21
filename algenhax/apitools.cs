@@ -56,8 +56,7 @@ namespace algenhax
             {
                 IntPtr hwnd = winapi.FindWindow(className, windowText);
                 winapi.GetWindowText(hwnd, builder, 128);
-                //LastWin32Error acts weird here for some reason...
-                if (/*Marshal.GetLastWin32Error() == 0 && */builder.ToString() == windowText)
+                if (hwnd != IntPtr.Zero)
                     return hwnd;
 
                 builder.Clear();
