@@ -30,6 +30,9 @@ namespace algenhax
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         public static extern IntPtr FindWindow2(string lpClassName, IntPtr lpWindowName);
 
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern IntPtr FindWindow3(IntPtr lpClassName, string lpWindowName);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
@@ -81,7 +84,7 @@ namespace algenhax
             IntPtr strPtr = Marshal.StringToHGlobalAuto(val);
             winapi.SendMessage(handle, winapi.WM_SETTEXT, (IntPtr)(1), strPtr);
             Marshal.FreeHGlobal(strPtr);
-            winapi.checkWin32Error();
+            //winapi.checkWin32Error();
         }
 
         [StructLayout(LayoutKind.Sequential)]

@@ -23,11 +23,29 @@ namespace algenhax
 
         static void Main(string[] args)
         {
-            //apitools.enumWindows();
+            //winapitools.enumWindows();
 
             Estym estym = new Estym();
             estym.init();
-            //winapitools.enumWindows();
+
+            /*Estym.ParametryGenetyczne pg = new Estym.ParametryGenetyczne();
+            pg.elitaryzm = true;
+            pg.skalowanie = false;
+            pg.l_osobnikow = 15;
+            pg.l_pokolen = 1337;
+            pg.p_krzyzowania = 0.66;
+            pg.p_mutacji = 0.01;
+
+            estym.setParametryGenetyczne(pg);*/
+
+            estym.wykonajObliczenia();
+            Console.WriteLine("DONE");
+
+            /*IntPtr estymHwnd = winapi.FindWindow3(IntPtr.Zero, "ESTYM");
+            IntPtr hmenu = winapi.GetMenu(estymHwnd);
+            winapitools.enumMenus(hmenu);*/
+
+            //winapi.GetMenu(
             //IntPtr hwnd = winapi.FindWindow("#32770", "Sprawdzanie wartości funkcji celu");
             //IntPtr hwnd = winapi.FindWindow("#32770", "Parametry genetyczne");
             //winapitools.enumChildWindows(hwnd);
