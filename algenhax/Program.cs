@@ -38,8 +38,9 @@ namespace algenhax
 
             estym.setParametryGenetyczne(pg);*/
 
-            estym.wykonajObliczenia();
-            Console.WriteLine("DONE");
+            //estym.wykonajObliczenia();
+            //Console.WriteLine("DONE");
+            estym.sprawdz();
 
             /*IntPtr estymHwnd = winapi.FindWindow3(IntPtr.Zero, "ESTYM");
             IntPtr hmenu = winapi.GetMenu(estymHwnd);

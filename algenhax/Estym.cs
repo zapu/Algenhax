@@ -39,6 +39,8 @@ namespace algenhax
                 genHwnd = winapitools.WaitForWindow("#32770", "Parametry genetyczne");
             }
 
+            Thread.Sleep(10);
+
             Dictionary<object, IntPtr> dict = new Dictionary<object, IntPtr>();
             winapitools.findWindowHandles(genHwnd, GenetyczneW, dict);
 
@@ -62,6 +64,37 @@ namespace algenhax
             {
                 Thread.Sleep(100);
             }
+        }
+
+        public double[] sprawdz()
+        {
+            IntPtr sprHwnd = winapi.FindWindow("#32770", "Sprawdzanie wartości funkcji celu");
+            if (sprHwnd == IntPtr.Zero)
+            {
+                winapi.PostMessage(estymHwnd, winapi.WM_COMMAND, (IntPtr)4007, IntPtr.Zero);
+                sprHwnd = winapitools.WaitForWindow("#32770", "Sprawdzanie wartości funkcji celu");
+            }
+
+            Thread.Sleep(10);
+
+            Dictionary<object, IntPtr> dict = new Dictionary<object, IntPtr>();
+            winapitools.findWindowHandles(sprHwnd, SprawdzanieW, dict);
+
+            winapi.SendMessage(dict["oblicz"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+
+            double[] result = new double[11];
+
+            result[0] = Double.Parse(winapi.managedGetText(dict["wynik"]).Replace('.',','));
+            for (int i = 1; i <= 10; i++)
+            {
+                result[i] = Double.Parse(winapi.managedGetText(dict[i.ToString()]).Replace('.', ','));
+            }
+
+            winapi.SendMessage(sprHwnd, winapi.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+
+            Thread.Sleep(10);
+
+            return result;
         }
 
         public void init()

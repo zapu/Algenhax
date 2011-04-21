@@ -87,6 +87,16 @@ namespace algenhax
             //winapi.checkWin32Error();
         }
 
+        public static string managedGetText(IntPtr handle)
+        {
+            int textLen = (int)winapi.SendMessage((IntPtr)handle, winapi.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero);
+            StringBuilder sb = new StringBuilder(textLen);
+            winapi.SendMessage2((IntPtr)handle, winapi.WM_GETTEXT, textLen, sb);
+            //winapi.checkWin32Error();
+
+            return sb.ToString().Substring(0, sb.Length-1);
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct MENUITEMINFO
         {

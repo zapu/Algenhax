@@ -13,18 +13,15 @@ namespace algenhax
         {
             try
             {
-                String className = winapi.managedGetClassName((IntPtr)hwnd);
-                String text = winapi.managedGetWindowText((IntPtr)hwnd);
+                string className = winapi.managedGetClassName((IntPtr)hwnd);
+                string text = winapi.managedGetWindowText((IntPtr)hwnd);
 
                 Console.WriteLine(className + " - " + text);
 
                 if (className == "Edit")
                 {
-                    int textLen = (int)winapi.SendMessage((IntPtr)hwnd, winapi.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero);
-                    StringBuilder sb = new StringBuilder(textLen);
-                    winapi.SendMessage2((IntPtr)hwnd, winapi.WM_GETTEXT, textLen, sb);
-                    winapi.checkWin32Error();
-                    Console.WriteLine("\ttext: (" + textLen + ") " + sb.ToString());
+                    string editText = winapi.managedGetText((IntPtr)hwnd);
+                    Console.WriteLine("\ttext: (" + editText.Length + ") " + editText);
                 }
                 else if (className == "Button")
                 {
