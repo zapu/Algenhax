@@ -10,11 +10,12 @@ namespace algenhax
 {
     class Estym
     {
-        public Estym()
+        public Estym(int sleepTime = 50)
         {
-
+            this.sleepTime = sleepTime;
         }
 
+        int sleepTime;
         IntPtr estymHwnd;
 
         public static string[] GenetyczneW = { "ok", "cancel", "populacja", null, "pokolenia", null, "pk", null, "pm", null, "skalowanie", "elitaryzm" };
@@ -39,7 +40,7 @@ namespace algenhax
                 genHwnd = winapitools.WaitForWindow("#32770", "Parametry genetyczne");
             }
 
-            Thread.Sleep(10);
+            Thread.Sleep(sleepTime);
 
             Dictionary<object, IntPtr> dict = new Dictionary<object, IntPtr>();
             winapitools.findWindowHandles(genHwnd, GenetyczneW, dict);
@@ -53,7 +54,7 @@ namespace algenhax
 
             winapi.SendMessage(dict["ok"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
 
-            Thread.Sleep(10);
+            Thread.Sleep(sleepTime);
         }
 
         public void wykonajObliczenia()
@@ -62,8 +63,10 @@ namespace algenhax
 
             while (winapi.FindWindow("#32770", "Postęp symulacji") != IntPtr.Zero)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(sleepTime);
             }
+
+            Thread.Sleep(sleepTime);
         }
 
         public double[] sprawdz()
@@ -75,7 +78,7 @@ namespace algenhax
                 sprHwnd = winapitools.WaitForWindow("#32770", "Sprawdzanie wartości funkcji celu");
             }
 
-            Thread.Sleep(10);
+            Thread.Sleep(sleepTime);
 
             Dictionary<object, IntPtr> dict = new Dictionary<object, IntPtr>();
             winapitools.findWindowHandles(sprHwnd, SprawdzanieW, dict);
@@ -90,9 +93,10 @@ namespace algenhax
                 result[i] = Double.Parse(winapi.managedGetText(dict[i.ToString()]).Replace('.', ','));
             }
 
-            winapi.SendMessage(sprHwnd, winapi.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            //winapi.SendMessage(sprHwnd, winapi.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            winapi.SendMessage(dict["cancel"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
 
-            Thread.Sleep(10);
+            Thread.Sleep(sleepTime);
 
             return result;
         }
@@ -102,21 +106,6 @@ namespace algenhax
             estymHwnd = winapi.FindWindow3(IntPtr.Zero, "ESTYM");
             if (estymHwnd == IntPtr.Zero)
                 throw new Exception("Cannot find Estym window.");
-
-            Console.WriteLine("Found estym hwnd " + estymHwnd);
-
-            //winapi.PostMessage(estymHwnd, winapi.WM_COMMAND, (IntPtr)4002, IntPtr.Zero);
-
-            //IntPtr genhwnd = winapitools.WaitForWindow("#32770", "Sprawdzanie wartości funkcji celu");
-
-            //winapitools.enumChildWindows(genhwnd);
-
-            //Dictionary<object, IntPtr> dict = new Dictionary<object,IntPtr>();
-            //winapitools.findWindowHandles(genhwnd, SprawdzanieW, dict);
-
-            //winapi.managedSetText(dict["wynik"], "roflol2");
-            //winapi.SendMessage(genhwnd, winapi.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-
         }
     }
 }

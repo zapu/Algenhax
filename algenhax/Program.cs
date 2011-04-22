@@ -21,56 +21,99 @@ namespace algenhax
             }
         }
 
-        static void Main(string[] args)
+        public static IEnumerable<double> enumerujDoubla2()
         {
-            //winapitools.enumWindows();
-
-            //winapitools.enumWindows();
-
-            /*Estym estym = new Estym();
-            estym.init();*/
-
-            ProjStru projstru = new ProjStru();
-            projstru.init();
-
-            ProjStru.ParametryZadania pg = new ProjStru.ParametryZadania();
-            pg.elitaryzm = true;
-            pg.skalowanie = false;
-            pg.l_osobnikow = 15;
-            pg.l_pokolen = 1337;
-            pg.p_krzyzowania = 0.66;
-            pg.p_mutacji = 0.01;
-            pg.rand = 15;
-
-            //projstru.setParametry(pg);
-            projstru.run();
-
-            /*Estym.ParametryGenetyczne pg = new Estym.ParametryGenetyczne();
-            pg.elitaryzm = true;
-            pg.skalowanie = false;
-            pg.l_osobnikow = 15;
-            pg.l_pokolen = 1337;
-            pg.p_krzyzowania = 0.66;
-            pg.p_mutacji = 0.01;
-
-            estym.setParametryGenetyczne(pg);*/
-
-            //estym.wykonajObliczenia();
-            //Console.WriteLine("DONE");
-            //estym.sprawdz();
-
-            /*IntPtr estymHwnd = winapi.FindWindow3(IntPtr.Zero, "ESTYM");
-            IntPtr hmenu = winapi.GetMenu(estymHwnd);
-            winapitools.enumMenus(hmenu);*/
-
-            //winapi.GetMenu(
-            //IntPtr hwnd = winapi.FindWindow("#32770", "Sprawdzanie wartości funkcji celu");
-            //IntPtr hwnd = winapi.FindWindow("#32770", "Parametry genetyczne");
-            //winapitools.enumChildWindows(hwnd);
+            for (int i = 1; i <= 9; i++)
+            {
+                yield return i * 0.01 + 0.0014;
+            }
+            for (int i = 1; i <= 9; i++)
+            {
+                yield return i * 0.1 + 0.014;
+            }
         }
 
-#if FALSE
         static void Main(string[] args)
+        {
+            EstymMain();
+        }
+
+        static void EstymPrint(Estym.ParametryGenetyczne p, double[] wyniki)
+        {
+            Console.Write(
+                p.l_osobnikow + ";" + 
+                (p.skalowanie ? 1 : 0) + ";" + (p.elitaryzm ? 1 : 0) + ";" +
+                p.p_krzyzowania + ";" + p.p_mutacji + ";" +
+                wyniki[0]);
+            Console.WriteLine();    
+        }
+
+        static void EstymMain()
+        {
+            Estym estym = new Estym();
+            estym.init();
+
+            double optymalne = 0;
+            double opt_wynik = Double.PositiveInfinity;
+
+            Estym.ParametryGenetyczne p = new Estym.ParametryGenetyczne();
+
+            p.l_osobnikow = 50;
+            p.l_pokolen = 1000;
+
+            for (byte i = 0; i < 4; i++)
+            {
+                p.elitaryzm = (i & 0x01) == 1;
+                p.skalowanie = ((i >> 1) & 0x01) == 1;
+
+                foreach (double d in enumerujDoubla2())
+                {
+                    p.p_krzyzowania = d;
+                    estym.setParametryGenetyczne(p);
+                    estym.wykonajObliczenia();
+                    double[] wyniki = estym.sprawdz();
+                    if (wyniki[0] < opt_wynik)
+                    {
+                        optymalne = d;
+                        opt_wynik = wyniki[0];
+                    }
+
+                    EstymPrint(p, wyniki);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.p_krzyzowania = optymalne;
+                foreach (double d in enumerujDoubla2())
+                {
+                    p.p_mutacji = d;
+                    estym.setParametryGenetyczne(p);
+                    estym.wykonajObliczenia();
+                    double[] wyniki = estym.sprawdz();
+                    if (wyniki[0] < opt_wynik)
+                    {
+                        optymalne = d;
+                        opt_wynik = wyniki[0];
+                    }
+
+                    EstymPrint(p, wyniki);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.p_mutacji = optymalne;
+
+                foreach(int d in new int[]{5,10,20,50})
+                {
+                    p.l_osobnikow = d;
+                    estym.setParametryGenetyczne(p);
+                    estym.wykonajObliczenia();
+                    double[] wyniki = estym.sprawdz();
+                    EstymPrint(p, wyniki);
+                    System.Threading.Thread.Sleep(50);
+                }
+            }
+        }
+
+        static void AlgenMain()
         {
             try
             {
@@ -92,8 +135,6 @@ namespace algenhax
                         return;
                 }
 
-
-
                 foreach (double val in enumerujDoubla())
                 {
                     if (en == 0)
@@ -114,6 +155,5 @@ namespace algenhax
                 Console.WriteLine(e.StackTrace);
             }
         }
-#endif
     }
 }
