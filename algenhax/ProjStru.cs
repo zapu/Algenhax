@@ -13,14 +13,15 @@ namespace algenhax
         const uint magicAddr = 0x004C80FA;
         const uint resultAddr = 0x004C80FD;
 
-        public ProjStru()
+        public ProjStru(int sleepTime)
         {
-
+            this.sleepTime = sleepTime;
         }
 
         IntPtr mainHwnd;
         uint processId;
         IntPtr hProcess;
+        int sleepTime;
 
         bool readingEnabled = false;
 
@@ -72,6 +73,8 @@ namespace algenhax
                 Thread.Sleep(50);
             }
 
+            Thread.Sleep(sleepTime);
+
             Dictionary<object, IntPtr> dict = new Dictionary<object, IntPtr>();
             winapitools.findWindowHandles(genHwnd, paramW, dict);
 
@@ -84,6 +87,8 @@ namespace algenhax
             winapi.managedSetText(dict["rand"], zad.rand.ToString());
 
             winapi.SendMessage(dict["ok"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
+
+            Thread.Sleep(sleepTime);
         }
 
         public void run()
@@ -93,12 +98,14 @@ namespace algenhax
 
             while (true)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(50);
 
                 string label = winapi.managedGetText(mainDict["label"]);
                 if (label.Contains("Zakończono"))
                     break;
             }
+
+            Thread.Sleep(sleepTime);
         }
 
         public double readResult()
