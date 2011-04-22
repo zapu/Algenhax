@@ -15,8 +15,11 @@ namespace algenhax
             {
                 string className = winapi.managedGetClassName((IntPtr)hwnd);
                 string text = winapi.managedGetWindowText((IntPtr)hwnd);
+                uint pid;
 
-                Console.WriteLine(className + " - " + text);
+                winapi.GetWindowThreadProcessId((IntPtr)hwnd, out pid);
+
+                Console.WriteLine(pid + " " + hwnd + " " + className + " - " + text);
 
                 if (className == "Edit")
                 {

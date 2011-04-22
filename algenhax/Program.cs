@@ -25,8 +25,25 @@ namespace algenhax
         {
             //winapitools.enumWindows();
 
-            Estym estym = new Estym();
-            estym.init();
+            //winapitools.enumWindows();
+
+            /*Estym estym = new Estym();
+            estym.init();*/
+
+            ProjStru projstru = new ProjStru();
+            projstru.init();
+
+            ProjStru.ParametryZadania pg = new ProjStru.ParametryZadania();
+            pg.elitaryzm = true;
+            pg.skalowanie = false;
+            pg.l_osobnikow = 15;
+            pg.l_pokolen = 1337;
+            pg.p_krzyzowania = 0.66;
+            pg.p_mutacji = 0.01;
+            pg.rand = 15;
+
+            //projstru.setParametry(pg);
+            projstru.run();
 
             /*Estym.ParametryGenetyczne pg = new Estym.ParametryGenetyczne();
             pg.elitaryzm = true;
@@ -40,7 +57,7 @@ namespace algenhax
 
             //estym.wykonajObliczenia();
             //Console.WriteLine("DONE");
-            estym.sprawdz();
+            //estym.sprawdz();
 
             /*IntPtr estymHwnd = winapi.FindWindow3(IntPtr.Zero, "ESTYM");
             IntPtr hmenu = winapi.GetMenu(estymHwnd);

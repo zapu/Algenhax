@@ -138,5 +138,22 @@ namespace algenhax
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetSubMenu(IntPtr hMenu, int nPos);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool ReadProcessMemory(
+          IntPtr hProcess,
+          IntPtr lpBaseAddress,
+          [Out] byte[] lpBuffer,
+          int dwSize,
+          out int lpNumberOfBytesRead
+         );
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+
+        public const UInt32 PROCESS_VM_READ = 0x0010;
     }
 }
