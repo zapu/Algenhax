@@ -52,6 +52,8 @@ namespace algenhax
             winapi.SendMessage(dict["skalowanie"], winapi.BM_SETCHECK, (p.skalowanie ? (IntPtr)1 : (IntPtr)0), IntPtr.Zero);
             winapi.SendMessage(dict["elitaryzm"], winapi.BM_SETCHECK, (p.elitaryzm ? (IntPtr)1 : (IntPtr)0), IntPtr.Zero);
 
+            Thread.Sleep(sleepTime);
+
             winapi.SendMessage(dict["ok"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
 
             Thread.Sleep(sleepTime);

@@ -13,7 +13,7 @@ namespace algenhax
         const uint magicAddr = 0x004C80FA;
         const uint resultAddr = 0x004C80FD;
 
-        public ProjStru(int sleepTime)
+        public ProjStru(int sleepTime = 50)
         {
             this.sleepTime = sleepTime;
         }
@@ -85,6 +85,8 @@ namespace algenhax
             winapi.SendMessage(dict["skalowanie"], winapi.BM_SETCHECK, (zad.skalowanie ? (IntPtr)1 : (IntPtr)0), IntPtr.Zero);
             winapi.SendMessage(dict["elitaryzm"], winapi.BM_SETCHECK, (zad.elitaryzm ? (IntPtr)1 : (IntPtr)0), IntPtr.Zero);
             winapi.managedSetText(dict["rand"], zad.rand.ToString());
+
+            Thread.Sleep(sleepTime);
 
             winapi.SendMessage(dict["ok"], winapi.BM_CLICK, IntPtr.Zero, IntPtr.Zero);
 

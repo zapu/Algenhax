@@ -35,7 +35,71 @@ namespace algenhax
 
         static void Main(string[] args)
         {
-            EstymMain();
+            //EstymMain();
+            ProjStruMain();
+        }
+
+        static void ProjStruPrint(ProjStru.ParametryZadania p, double wynik)
+        {
+            Console.Write(
+                p.l_osobnikow + ";" +
+                (p.skalowanie ? 1 : 0) + ";" + (p.elitaryzm ? 1 : 0) + ";" +
+                p.p_krzyzowania + ";" + p.p_mutacji + ";" +
+                wynik);
+            Console.WriteLine(); 
+        }
+
+        static void ProjStruMain()
+        {
+            ProjStru proj = new ProjStru();
+            proj.init();
+
+            double optymalne = 0;
+            double opt_wynik = Double.PositiveInfinity;
+
+            ProjStru.ParametryZadania p = new ProjStru.ParametryZadania();
+            p.l_osobnikow = 100;
+            p.l_pokolen = 100;
+
+            for (byte i = 0; i < 4; i++)
+            {
+                p.elitaryzm = (i & 0x01) == 1;
+                p.skalowanie = ((i >> 1) & 0x01) == 1;
+
+                foreach (double d in enumerujDoubla())
+                {
+                    p.p_krzyzowania = d;
+                    proj.setParametry(p);
+                    proj.run();
+                    double result = proj.readResult();
+                    if (result < opt_wynik)
+                    {
+                        opt_wynik = result;
+                        optymalne = d;
+                    }
+                    ProjStruPrint(p, result);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.p_krzyzowania = optymalne;
+
+                foreach (double d in enumerujDoubla())
+                {
+                    p.p_mutacji = d / 2;
+                    proj.setParametry(p);
+                    proj.run();
+                    double result = proj.readResult();
+                    if (result < opt_wynik)
+                    {
+                        opt_wynik = result;
+                        optymalne = d / 2;
+                    }
+                    ProjStruPrint(p, result);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.p_mutacji = optymalne;
+            }
         }
 
         static void EstymPrint(Estym.ParametryGenetyczne p, double[] wyniki)
