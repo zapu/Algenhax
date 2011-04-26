@@ -35,14 +35,14 @@ namespace algenhax
 
         static void Main(string[] args)
         {
-            //EstymMain();
-            ProjStruMain();
+            EstymMain();
+            //ProjStruMain();
         }
 
-        static void ProjStruPrint(ProjStru.ParametryZadania p, double wynik)
+        static void ProjStruPrint(int lp, ProjStru.ParametryZadania p, double wynik)
         {
-            Console.Write(
-                p.l_osobnikow + ";" +
+            Console.Write(lp + ";" +
+                p.l_osobnikow + ";" + p.l_pokolen + ";" +
                 (p.skalowanie ? 1 : 0) + ";" + (p.elitaryzm ? 1 : 0) + ";" +
                 p.p_krzyzowania + ";" + p.p_mutacji + ";" +
                 wynik);
@@ -54,17 +54,26 @@ namespace algenhax
             ProjStru proj = new ProjStru();
             proj.init();
 
+            Console.WriteLine("L.p.;Liczba osobników;Liczba pokoleń;Skalowanie;Elitaryzm;P krzyżowania; P mutacji;Najniższy koszt osobnika");
+
+            int lp = 0;
+
             double optymalne = 0;
+            int optymalny_int = 0;
             double opt_wynik = Double.PositiveInfinity;
 
             ProjStru.ParametryZadania p = new ProjStru.ParametryZadania();
-            p.l_osobnikow = 100;
-            p.l_pokolen = 100;
-
             for (byte i = 0; i < 4; i++)
             {
                 p.elitaryzm = (i & 0x01) == 1;
                 p.skalowanie = ((i >> 1) & 0x01) == 1;
+                p.l_osobnikow = 100;
+                p.l_pokolen = 100;
+                p.p_mutacji = 0.2;
+
+                optymalne = 0;
+                optymalny_int = 0;
+                opt_wynik = Double.PositiveInfinity;
 
                 foreach (double d in enumerujDoubla())
                 {
@@ -77,11 +86,12 @@ namespace algenhax
                         opt_wynik = result;
                         optymalne = d;
                     }
-                    ProjStruPrint(p, result);
+                    ProjStruPrint(lp++, p, result);
                     System.Threading.Thread.Sleep(50);
                 }
 
                 p.p_krzyzowania = optymalne;
+                opt_wynik = Double.PositiveInfinity;
 
                 foreach (double d in enumerujDoubla())
                 {
@@ -94,21 +104,61 @@ namespace algenhax
                         opt_wynik = result;
                         optymalne = d / 2;
                     }
-                    ProjStruPrint(p, result);
+                    ProjStruPrint(lp++, p, result);
                     System.Threading.Thread.Sleep(50);
                 }
 
                 p.p_mutacji = optymalne;
+                opt_wynik = Double.PositiveInfinity;
+
+                foreach (int d in new int[] { 25, 50, 100, 150, 200 })
+                {
+                    p.l_osobnikow = d;
+                    proj.setParametry(p);
+                    proj.run();
+                    double result = proj.readResult();
+                    if (result < opt_wynik)
+                    {
+                        opt_wynik = result;
+                        optymalny_int = d;
+                    }
+                    ProjStruPrint(lp++, p, result);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.l_osobnikow = optymalny_int;
+                opt_wynik = Double.PositiveInfinity;
+
+                foreach (int d in new int[] { 50, 100, 150, 200, 250 })
+                {
+                    p.l_pokolen = d;
+                    proj.setParametry(p);
+                    proj.run();
+                    double result = proj.readResult();
+                    if (result < opt_wynik)
+                    {
+                        opt_wynik = result;
+                        optymalny_int = d;
+                    }
+                    ProjStruPrint(lp++, p, result);
+                    System.Threading.Thread.Sleep(50);
+                }
             }
         }
 
-        static void EstymPrint(Estym.ParametryGenetyczne p, double[] wyniki)
+        static void EstymPrint(int lp, Estym.ParametryGenetyczne p, double[] wyniki)
         {
-            Console.Write(
-                p.l_osobnikow + ";" + 
+            Console.Write(lp + ";" +
+                p.l_osobnikow + ";" + p.l_pokolen + ";" +
                 (p.skalowanie ? 1 : 0) + ";" + (p.elitaryzm ? 1 : 0) + ";" +
-                p.p_krzyzowania + ";" + p.p_mutacji + ";" +
-                wyniki[0]);
+                p.p_krzyzowania + ";" + p.p_mutacji + ";");
+
+            foreach (int i in new int[] { 1, 6, 7, 8, 9 })
+            {
+                Console.Write(wyniki[i] + ";");
+            }
+
+            Console.Write(wyniki[0]);
             Console.WriteLine();    
         }
 
@@ -122,13 +172,42 @@ namespace algenhax
 
             Estym.ParametryGenetyczne p = new Estym.ParametryGenetyczne();
 
-            p.l_osobnikow = 50;
-            p.l_pokolen = 1000;
+            int lp = 1;
+
+            Console.WriteLine("lp;liczba osobników;liczba pokoleń;skalowanie;elitaryzm;p krzyżowania;p mutacji;a0;a5;a6;a7;a8;wynik");
 
             for (byte i = 0; i < 4; i++)
             {
                 p.elitaryzm = (i & 0x01) == 1;
                 p.skalowanie = ((i >> 1) & 0x01) == 1;
+                p.l_osobnikow = 50;
+                p.l_pokolen = 1000;
+                p.p_mutacji = 0.05;
+                p.p_krzyzowania = 0.2;
+
+                optymalne = 0;
+                opt_wynik = Double.PositiveInfinity;
+
+                foreach (double d in enumerujDoubla2())
+                {
+                    p.p_mutacji = d;
+                    estym.setParametryGenetyczne(p);
+                    estym.wykonajObliczenia();
+                    double[] wyniki = estym.sprawdz();
+                    if (wyniki[0] < opt_wynik)
+                    {
+                        optymalne = d;
+                        opt_wynik = wyniki[0];
+                    }
+
+                    EstymPrint(lp++, p, wyniki);
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                p.p_mutacji = optymalne;
+
+                optymalne = 0;
+                opt_wynik = Double.PositiveInfinity;
 
                 foreach (double d in enumerujDoubla2())
                 {
@@ -142,36 +221,19 @@ namespace algenhax
                         opt_wynik = wyniki[0];
                     }
 
-                    EstymPrint(p, wyniki);
+                    EstymPrint(lp++, p, wyniki);
                     System.Threading.Thread.Sleep(50);
                 }
 
                 p.p_krzyzowania = optymalne;
-                foreach (double d in enumerujDoubla2())
-                {
-                    p.p_mutacji = d;
-                    estym.setParametryGenetyczne(p);
-                    estym.wykonajObliczenia();
-                    double[] wyniki = estym.sprawdz();
-                    if (wyniki[0] < opt_wynik)
-                    {
-                        optymalne = d;
-                        opt_wynik = wyniki[0];
-                    }
 
-                    EstymPrint(p, wyniki);
-                    System.Threading.Thread.Sleep(50);
-                }
-
-                p.p_mutacji = optymalne;
-
-                foreach(int d in new int[]{5,10,20,50})
+                foreach(int d in new int[]{5, 10, 20})
                 {
                     p.l_osobnikow = d;
                     estym.setParametryGenetyczne(p);
                     estym.wykonajObliczenia();
                     double[] wyniki = estym.sprawdz();
-                    EstymPrint(p, wyniki);
+                    EstymPrint(lp++, p, wyniki);
                     System.Threading.Thread.Sleep(50);
                 }
             }
